@@ -1,0 +1,4 @@
+{
+	"description":"Abbreviations are defined at https://esf.itms.pro/spc/abbr.html",
+	"cfgPth":"/web/dmn/itms.loc/node_modules/esf-eml-rcv/tst/d/esfapp.cfg.json"
+}

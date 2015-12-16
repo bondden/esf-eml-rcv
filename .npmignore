@@ -1,0 +1,27 @@
+syntax: glob
+
+.idea/
+nbproject/
+.run
+.dld
+.pcs
+.tmp
+.tst
+~*
+
+desktop.ini
+
+logs
+*.log
+
+pids
+*.pid
+*.seed
+
+lib-cov
+coverage
+.grunt
+.lock-wscript
+
+build/Release
+node_modules

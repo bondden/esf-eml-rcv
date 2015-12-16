@@ -1,0 +1,70 @@
+{
+	"schemaVersion":"0.4.0",
+	"schemaChangeLog":[
+		{
+			"v":"0.2.0",
+			"changes":"removed rules/hasAttachment",
+			"reason":"raw massages saved first and then parsed"
+		},
+		{
+			"v":"0.3.0",
+			"changes":"added: partial fetching parameters, file extensions",
+			"reason":"esf-eml-rcv-0.4, esf-eml-rcv-0.3"
+		},
+		{
+			"v":"0.4.0",
+			"changes":"added: local/clearPaths",
+			"reason":"ability to keep fetched files, grouped by fetch dates"
+		}
+	],
+	"pcs":{
+		"totalTimeout":7200000,
+		"portion":100000,
+		"interPortionDelayMs":5000
+	},
+	"imap":{
+		"user":"{USER}",
+		"password":"{PASSWORD}",
+		"host":"{IMAP_HOST}",
+		"port":{IMAP_PORT},
+		"tls":true
+	},
+	"rules":{
+		"from":{
+			"description":"accepted values for addr: all|regex|list default: all",
+			"addr":"all",
+			"regex":"",
+			"list":[
+
+			]
+		},
+		"dateRange":{
+			"since":"2000-01-01 00:00:00",
+			"till":"2015-08-30 00:00:00"
+		},
+		"attachmentTypes":[
+			"application"
+		],
+		"attachmentSubtypes":[
+			"x-excel",
+			"vnd.ms-office",
+			"vnd.ms-excel",
+			"vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			"octet-stream"
+		],
+		"attachmentExtensions":[
+			"xls",
+			"xlsx"
+		]
+	},
+	"local":{
+		"clearPaths":false,
+		"path":"tst/d/rcv/",
+		"subDirs":{
+			"raw":"raw/",
+			"att":"att/",
+			"unm":"unm/"
+		},
+		"description":"raw - downloaded mails\natt - attachments\nunm - attachments by extention, not matching subtypes, according esf-eml-rcv-0.3"
+	}
+}
