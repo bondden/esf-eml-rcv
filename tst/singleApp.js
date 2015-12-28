@@ -2,7 +2,7 @@
  * Created by root on 8/29/15.
  */
 'use strict';
-require('babel/polyfill');
+//require('babel/polyfill');
 
 var
 	expect   = require('chai').expect,

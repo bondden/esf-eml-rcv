@@ -21,7 +21,7 @@ esf-eml-rcv-1.1 | It should have an option to copy saved files to persistent pla
 
 ## API v.1.0
 
-```cs
+```javascript
 class EmlRcv extends Bsc {
   Promise reloadConfig([String pathToConfigFile]) //inherited
   Promise checkMail()
