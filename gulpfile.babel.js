@@ -48,7 +48,7 @@ gulp.task('tst',['bld'],()=>{
     }));
 });
 
-gulp.task('testSingle',['bld'],()=>{
+gulp.task('tstSgl',['bld'],()=>{
   return gulp
     .src(d.tst.single,{read:false})
     .pipe(mocha({
@@ -69,4 +69,5 @@ gulp.task('default',['watch','bld']);
 
 //aliases for backward compatibility
 gulp.task('test',['tst']);
+gulp.task('testSingle',['tstSgl']);
 gulp.task('js',['bld']);

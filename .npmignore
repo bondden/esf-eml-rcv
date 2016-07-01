@@ -2,6 +2,10 @@ syntax: glob
 
 # prject specific
 
+dbg.js
+tst/singleApp.js
+tst/d/eml/**
+
 # common
 
 node_modules

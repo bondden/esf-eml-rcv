@@ -1,5 +1,5 @@
 {
-	"schemaVersion":"0.4.0",
+	"schemaVersion":"0.5.0",
 	"schemaChangeLog":[
 		{
 			"v":"0.2.0",
@@ -15,12 +15,18 @@
 			"v":"0.4.0",
 			"changes":"added: local/clearPaths",
 			"reason":"ability to keep fetched files, grouped by fetch dates"
+		},
+		{
+			"v":"0.5.0",
+			"changes":"added: pcs/singleMailFetchTimeoutMs",
+			"reason":"process control consistency"
 		}
 	],
 	"pcs":{
 		"totalTimeout":7200000,
 		"portion":100000,
-		"interPortionDelayMs":5000
+		"interPortionDelayMs":5000,
+		"singleMailFetchTimeoutMs":180000
 	},
 	"imap":{
 		"user":"{USER}",
