@@ -1,5 +1,10 @@
 syntax: glob
 
+# prject specific
+
+# common
+
+node_modules
 .idea/
 nbproject/
 .run
@@ -8,6 +13,7 @@ nbproject/
 .tmp
 .tst
 ~*
+build/Release
 
 desktop.ini
 
@@ -23,5 +29,3 @@ coverage
 .grunt
 .lock-wscript
 
-build/Release
-node_modules

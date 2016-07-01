@@ -20,7 +20,7 @@ var d    ={
     maps:'.maps/'
   },
   tst:{
-    main:  'tst/main.js',
+    main:  'tst/idx.js',
     single:'tst/singleApp.js'
   }
 };
