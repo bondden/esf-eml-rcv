@@ -1,6 +1,6 @@
 {
   "name": "esf-eml-rcv",
-  "version": "0.2.4",
+  "version": "1.1.0",
   "description": "ESF E-mail Receiver",
   "main": "index.js",
   "scripts": {
