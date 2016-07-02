@@ -18,16 +18,17 @@ var modUtl = _interopRequireWildcard(_esfUtl);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-var Imap = require('imap'),
-    iconv = require('iconv'),
-    MailParser = require("mailparser").MailParser,
-    inspect = require('util').inspect,
-    path = require('path'),
-    fs = require('fs-extra');
+const Imap = require('imap'),
+      iconv = require('iconv'),
+      MailParser = require("mailparser").MailParser,
 
-var Utl = modUtl.Utl,
-    L = Utl.log,
-    E = Utl.rejectingError;
+//inspect   =require('util').inspect,
+path = require('path'),
+      fs = require('fs-extra');
+
+const U = modUtl.Utl,
+      L = U.log,
+      E = U.rejectingError;
 
 class EmlRcv extends modBsc.Bsc {
 
@@ -49,7 +50,7 @@ class EmlRcv extends modBsc.Bsc {
   }
 
   getCurrentDateTime() {
-    return Utl.getCurrentDateFmtFFS();
+    return U.getCurrentDateFmtFFS();
   }
 
   createFolders(folderName) {
@@ -69,10 +70,10 @@ class EmlRcv extends modBsc.Bsc {
 
         let wtr = [];
         for (let subDirId in H.cfg.local.subDirs) {
-          if (!H.cfg.local.subDirs.hasOwnProperty(subDirId)) return;
-          let subDirName = H.cfg.local.subDirs[subDirId];
-          // for(let [subDirId,subDirName] of Object.entries(H.cfg.local.subDirs)){
 
+          if (!H.cfg.local.subDirs.hasOwnProperty(subDirId)) return;
+
+          let subDirName = H.cfg.local.subDirs[subDirId];
           wtr.push(new Promise((rs1, rj1) => {
 
             let subDir = path.resolve(operationDir + '/' + subDirName);
@@ -112,26 +113,28 @@ class EmlRcv extends modBsc.Bsc {
       let psr = new MailParser();
       let wtr = [];
 
-      psr.on("end", eml => {
+      psr.on('end', eml => {
 
         let attLogItem = {
-          "msgId": msgId,
-          "from": eml.from,
-          "subj": eml.subject,
-          "date": eml.date,
-          "att": []
+          msgId: msgId,
+          from: eml.from,
+          subj: eml.subject,
+          date: eml.date,
+          att: []
         };
-
-        L('#' + msgId + ' attachments:', 'em');
 
         //fs.writeFileSync(path.resolve(opDir+'/e0/'+msgId+'.json'),JSON.stringify(eml,null,'\t'),{encoding:"utf8"});
 
         if (eml.attachments && eml.attachments.length) {
 
+          L('#' + msgId + ' attachments:', 'em');
+
           H.stat.withAttachments++;
 
           eml.attachments.forEach((att, i, a) => {
-            L('Msg ' + msgId + ' has attachment: ' + att.fileName);
+
+            if (!att.fileName) return;
+            L(`Msg ${ msgId } has attachment: ${ att.fileName }`);
 
             let fileData = {
               ext: path.extname(att.fileName),
@@ -201,13 +204,7 @@ class EmlRcv extends modBsc.Bsc {
 
       try {
 
-        //dbg:
-        //L(H.cfg.imap);
-        //return;
-
         var imap = new Imap(H.cfg.imap);
-
-        //L('Imap:\n'+JSON.stringify(imap,null,'\t'));
 
         imap.once('ready', () => {
           imap.openBox('INBOX', true, (e1, box) => {
@@ -215,8 +212,6 @@ class EmlRcv extends modBsc.Bsc {
             if (e1) {
               return E(5, 'Error opening mail box', e1, rj);
             }
-
-            //L('Inbox opened. box: '+JSON.stringify(box,null,'\t'));
 
             rs(imap);
           });
@@ -231,7 +226,7 @@ class EmlRcv extends modBsc.Bsc {
           //rs('ok','em');
         });
 
-        return imap.connect();
+        imap.connect();
       } catch (e0) {
         E(205, 'Error opening initiating Mailbox', e0, rj);
       }
@@ -242,7 +237,7 @@ class EmlRcv extends modBsc.Bsc {
     var H = this;
     return new Promise((rs, rj) => {
 
-      imap.search(['UNSEEN', ['SINCE', H.cfg.rules.dateRange.since], ['BEFORE', H.cfg.rules.dateRange.till]], (e4, searchResult) => {
+      imap.search([H.cfg.rules.flag, ['SINCE', H.cfg.rules.dateRange.since], ['BEFORE', H.cfg.rules.dateRange.till]], (e4, searchResult) => {
 
         if (e4) {
           E(6, 'Error searching messages', e4, rj, true);
@@ -255,18 +250,25 @@ class EmlRcv extends modBsc.Bsc {
     });
   }
 
-  receiveMail(operationDir, searchResult, imap) {
+  receiveMail(operationDir, searchResultPortion, imap) {
     var H = this;
     return new Promise((rs, rj) => {
 
-      let f = imap.seq.fetch(searchResult, {
+      //L(`Receiving mail ${Array.isArray(searchResultPortion)?searchResultPortion.join(','): ''}...`);
+      L(`Receiving mail...`);
+
+      let wtr = [new Promise((rst, rjt) => {
+        setTimeout(() => {
+          rst(true);
+        }, 1000);
+      })];
+
+      let f = imap.fetch(searchResultPortion, {
         bodies: '',
         struct: true
       });
 
-      let wtr = [new Promise((rst, rjt) => {
-        setTimeout(() => rst(true), H.cfg.pcs.singleMailFetchTimeoutMs);
-      })];
+      L(f);
 
       f.on('message', (msg, num) => {
 
@@ -280,8 +282,10 @@ class EmlRcv extends modBsc.Bsc {
           });
 
           stream.once('end', () => {
+
             wtr.push(H.processMessage(num, buffer, operationDir));
-            imap.end();
+
+            //imap.end();
           });
         });
 
@@ -291,17 +295,22 @@ class EmlRcv extends modBsc.Bsc {
       });
 
       f.once('error', e3 => {
-        E(7, 'Fetch error', e3);
+        return E(7, 'Fetch error', e3, rj);
       });
 
       f.once('end', () => {
 
-        L('Done fetching all messages');
-        imap.end();
+        L('Done receiving all messages');
+        //imap.end();
 
-        Promise.race(wtr).then(rw => {
+        Promise.all(wtr).then(rw => {
+
+          L('closing imap');
+          imap.end();
 
           L('Done processing fetched messages.\nSaving stat...');
+          L(`wtr.length: ${ wtr.length }`);
+          L(`rw: ${ rw }`);
 
           fs.writeJson(H.stat.operationDir + '/stt.json', H.stat, es => {
 
@@ -310,10 +319,19 @@ class EmlRcv extends modBsc.Bsc {
             }
 
             L('Stat saved', 'em');
-            rs('Stat saved');
+
+            L('Closing the box...');
+            imap.closeBox(ec => {
+
+              if (ec) {
+                return E(10, 'Close box error', ec, rj);
+              }
+            });
+
+            rs('Done');
           });
         }).catch(ew => {
-          E(9, 'Fetch error', ew, rj);
+          return E(9, 'Fetch error', ew, rj);
         });
       });
     });
@@ -333,27 +351,26 @@ class EmlRcv extends modBsc.Bsc {
         rs(0);
       }
 
-      //let tmr=null;
       let wtr = [];
 
       let i = 1;
       let l = Math.ceil(searchResult.length / H.cfg.pcs.portion);
       while (searchResult.length > 0) {
 
-        let portion = searchResult.splice(0, H.cfg.pcs.portion);
         L('Fetching portion: ' + i + ' of ' + l);
-        wtr.push(H.receiveMail(operationDir, portion, imap));
 
-        //tmr=setTimeout(function(){
-        //	L('Fetching portion: '+portion);
-        //	wtr.push(H.receiveMail(operationDir,portion));
-        //},H.cfg.pcs.interPortionDelayMs);
+        let portion = searchResult.splice(0, H.cfg.pcs.portion);
+
+        L(`Extracted the portion: ${ portion } of ${ searchResult }`);
+
+        wtr.push(H.receiveMail(operationDir, portion, imap));
 
         i++;
       }
 
       Promise.all(wtr).then(rw => {
-        rs('All Portions fetched succssfully');
+        L('All Portions fetched successfully');
+        rs(true);
       }).catch(ew => {
         E(208, 'Error fetching portion ', ew, rj);
       });
@@ -409,7 +426,7 @@ class EmlRcv extends modBsc.Bsc {
 
                 H.checkMail(imap).then(searchResult => {
 
-                  L('Mail checked. Found ' + searchResult.length + ' messages');
+                  L(`Mail checked. Found ${ searchResult.length } messages`);
                   L('Fetching mail...');
 
                   H.splitMessagesRangeAndFetch(H.stat.operationDir, searchResult, imap).then(rf => {

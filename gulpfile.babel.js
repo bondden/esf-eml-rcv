@@ -21,7 +21,7 @@ var d    ={
   },
   tst:{
     main:  'tst/idx.js',
-    single:'tst/singleApp.js'
+    single:'tst/sglApp.js'
   }
 };
 
@@ -53,7 +53,7 @@ gulp.task('tstSgl',['bld'],()=>{
     .src(d.tst.single,{read:false})
     .pipe(mocha({
       reporter:'spec',
-      ui:      'bdd'
+      ui:      'tdd'
     }));
 });
 

@@ -3,7 +3,7 @@ syntax: glob
 # prject specific
 
 dbg.js
-tst/singleApp.js
+tst/sglApp.js
 tst/d/eml/**
 
 # common

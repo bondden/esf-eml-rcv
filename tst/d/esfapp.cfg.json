@@ -1,5 +1,5 @@
 {
-	"schemaVersion":"0.5.0",
+	"schemaVersion":"0.6.0",
 	"schemaChangeLog":[
 		{
 			"v":"0.2.0",
@@ -20,6 +20,11 @@
 			"v":"0.5.0",
 			"changes":"added: pcs/singleMailFetchTimeoutMs",
 			"reason":"process control consistency"
+		},
+		{
+			"v":"0.6.0",
+			"changes":"added: rules/flag",
+			"reason":"configure flag"
 		}
 	],
 	"pcs":{
@@ -36,6 +41,7 @@
 		"tls":true
 	},
 	"rules":{
+		"flag":"UNSEEN",
 		"from":{
 			"description":"accepted values for addr: all|regex|list default: all",
 			"addr":"all",

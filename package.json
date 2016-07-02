@@ -37,6 +37,7 @@
   "dependencies": {
     "esf-bsc": "^1.2.0",
     "esf-utl": "^2.2.2",
+    "fs-extra": "^0.30.0",
     "iconv": "^2.2.1",
     "imap": "^0.8.17",
     "mailparser": "^0.6.0"
