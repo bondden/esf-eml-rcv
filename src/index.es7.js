@@ -43,12 +43,16 @@ export class EmlRcv extends modBsc.Bsc {
   getCurrentDateTime(){
     return U.getCurrentDateFmtFFS();
   }
+  
+  getRtPth(p){
+    return path.isAbsolute(p)?p:`${__dirname}/${p}`;
+  }
 
   createFolders(folderName){
     var H=this;
     return new Promise((rs,rj)=>{
 
-      let operationDir=path.resolve(__dirname+'/'+H.cfg.local.path+folderName);
+      let operationDir=path.resolve(this.getRtPth(H.cfg.local.path)+folderName);
       fs.ensureDir(operationDir,e=>{
 
         if(e){
@@ -464,7 +468,8 @@ export class EmlRcv extends modBsc.Bsc {
            L('Cleaning caches...');
 
            //todo: implement clearPaths bool
-           fs.emptyDir(path.resolve(__dirname+'/'+H.cfg.local.path),e5=>{
+           
+           fs.emptyDir(path.resolve(this.getRtPth(H.cfg.local.path)),e5=>{
 
              if(e5){
                return E(11,'Error cleaning dirs',e5,rj);
